@@ -1,73 +1,70 @@
-# React + TypeScript + Vite
+# vite-react-hono-vercel-starter
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Viteで構築したReact + TypeScriptのフロントエンドと、Honoで構築したバックエンドAPIを統合したVercel向けのスタータープロジェクトです。
 
-Currently, two official plugins are available:
+## プロジェクト構成
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **フロントエンド**: Vite + React + TypeScript
+- **バックエンド**: Hono (Node.js/Edge Runtime対応)
+- **デプロイ**: Vercel
 
-## React Compiler
+## 開発環境の構築
 
-The React Compiler is currently not compatible with SWC. See [this issue](https://github.com/vitejs/vite-plugin-react/issues/428) for tracking the progress.
+### 1. 依存関係のインストール
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### 2. 開発サーバーの起動
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+開発環境では、フロントエンドとバックエンドを別々に起動します。
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
+#### バックエンドサーバーの起動
+
+```bash
+npm run server:hono
+```
+
+バックエンドサーバーは `http://localhost:3001` で起動します。
+
+#### フロントエンド開発サーバーの起動
+
+別のターミナルで以下を実行します。
+
+```bash
+npm run dev
+```
+
+フロントエンド開発サーバーは `http://localhost:5173` で起動します。
+
+### 3. Vercelでのローカル開発
+
+Vercelの開発環境で実行する場合：
+
+```bash
+npm install -g vercel
+```
+
+```bash
+npm run server:vercel
+```
+
+SPAの場合は下記のように `vercel.json` にsourceを追加してください
+
+
+```diff:
+{
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/api"
     },
-  },
-])
++    {
++      "source": "/(.*)",
++      "destination": "/index.html"
++    }
+  ]
+}
+
 ```

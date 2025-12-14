@@ -1,34 +1,33 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [responses, setResponses] = useState<unknown | null>(null)
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div>
+      <div style={{display: 'flex', gap: '10px', flexFlow: 'row wrap'}}>
+        <button onClick={() => fetch('/api/health').then(res => res.json()).then(data => setResponses(data))}>fetch health</button>
+        <button onClick={() => fetch('/api/hello_world').then(res => res.json()).then(data => setResponses(data))}>fetch hello world</button>
+        <button onClick={() => fetch('/api/users').then(res => res.json()).then(data => setResponses(data))}>fetch users</button>
+        <button onClick={() => fetch('/api/users/1').then(res => res.json()).then(data => setResponses(data))}>fetch user 1</button>
+        <button onClick={() => fetch('/api/users', {
+          method: 'POST',
+          body: JSON.stringify({ name: 'John Doe', email: 'john.doe@example.com' })
+        }).then(res => res.json()).then(data => setResponses(data))}>create user</button>
+        <button onClick={() => fetch('/api/users/1', {
+          method: 'PUT',
+          body: JSON.stringify({ name: 'John Doe', email: 'john.doe@example.com' })
+          }).then(res => res.json()).then(data => setResponses(data))}>update user 1</button>
+        <button onClick={() => fetch('/api/users/1', {
+          method: 'DELETE',
+        }).then(res => res.json()).then(data => setResponses(data))}>delete user 1</button>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
+      
+      <div style={{marginTop: '20px', backgroundColor: 'grey', color: 'white', padding: '10px', borderRadius: '5px'}}>
+        <p style={{fontSize: '12px'}}>{JSON.stringify(responses)}</p>
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    </div>
   )
 }
 
